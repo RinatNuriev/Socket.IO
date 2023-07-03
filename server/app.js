@@ -26,17 +26,16 @@ app.listen(port, () => {
 // ---------------socket-----------
 
 io.on("connection", (socket) => {
-    // console.log(socket);
     socket.emit('connected', {
-        message: 'Ready to work',
-        anotherMessage: 'And for chat'
+        connectionMessage: 'Ready to work',
     });
 
-    socket.on('message', (arg) => {
-        console.log(arg);
-        socket.emit('send', {
-            newMessage: arg
+    socket.join('room');
+    socket.on('message', (messageFromClient) => {
+        io.to('room').emit('send', {
+            messageToClient: messageFromClient
         })
     })
 });
+
 httpServer.listen(3001);
