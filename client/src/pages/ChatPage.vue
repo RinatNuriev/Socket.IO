@@ -46,8 +46,8 @@ export default defineComponent({
         const messages = ref<string[]>([]);
 
         onMounted((): void => {
-            socket.on('connected', (arg: Message) => {
-                console.log(arg.connectionMessage);
+            socket.on('connected', (arg: string) => {
+                messages.value.push(arg)
             });
             socket.on('connection_error', (arg: Message) => {
                 console.log(arg.message);
