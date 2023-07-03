@@ -26,6 +26,7 @@ import { io } from 'socket.io-client'
 
 interface Message {
     connectionMessage?: string | undefined;
+    message?: string | undefined;
 }
 
 type Value = {
@@ -35,7 +36,11 @@ type Value = {
 export default defineComponent({
     name: 'ChatPage',
     setup() {
-        const socket = io("http://localhost:3001");
+        const socket = io("http://localhost:3001", {
+            auth: {
+                token: 'secret'
+            }
+        });
         const messageFromExpress: Value = ref('');
         const messageToServer = ref('');
         const messages = ref<string[]>([]);
@@ -43,8 +48,11 @@ export default defineComponent({
         onMounted((): void => {
             socket.on('connected', (arg: Message) => {
                 console.log(arg.connectionMessage);
-            })
-        })
+            });
+            socket.on('connection_error', (arg: Message) => {
+                console.log(arg.message);
+            });
+        });
 
         watchEffect(async (): Promise<void> => {
             const res = await fetch('http://localhost:3000/hello')

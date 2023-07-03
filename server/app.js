@@ -24,6 +24,17 @@ app.listen(port, () => {
 })
 
 // ---------------socket-----------
+io.use((socket, next) => {
+    const token = socket.handshake.auth.token
+    if (token === 'secret') {
+        next()
+    } else {
+        next()
+        socket.emit('connection_error', {
+            message: 'Not auth'
+        });
+    }
+});
 
 io.on("connection", (socket) => {
     socket.emit('connected', {
